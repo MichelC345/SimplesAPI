@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import com.simplesapi.funcionario.model.Employee;
 import org.springframework.web.bind.annotation.RequestBody;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,15 +31,17 @@ public class EmployeeService {
         employeeRep.deleteById(id);
     }
 
-    public Employee updateEmployee(Long id, Employee updatedEmp) {
+    public void updateEmployee(Long id, Employee updatedEmp) {
         Employee emp = employeeRep.findById(id).orElseThrow();
         emp.setCPF(updatedEmp.getCPF());
         emp.setNome(updatedEmp.getNome());
         emp.setEmail(updatedEmp.getEmail());
         emp.setTelefone(updatedEmp.getTelefone());
         emp.setCargo(updatedEmp.getCargo());
-        emp.setDataEntrada(updatedEmp.getDataEntrada());
+        //emp.setDataEntrada(updatedEmp.getDataEntrada());
+        emp.setDataEntrada(String.valueOf(LocalDate.now()));
 
-        return employeeRep.save(emp);
+        employeeRep.save(emp);
+        //return employeeRep.save(emp);
     }
 }
