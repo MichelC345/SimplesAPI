@@ -1,9 +1,15 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { Funcionario } from "@/types"
+import { Employee } from "@/types"
+import DataTableRowActions from "@/components/ui/DataTableRowActions"
 
-export const columns: ColumnDef<Funcionario>[] = [
+interface BankAccountsColumnsProps {
+  onEdit: (emp: Employee) => void;
+  onDelete: (emp: Employee) => void;
+}
+
+export const getColumns = ({onEdit, onDelete}: BankAccountsColumnsProps): ColumnDef<Employee>[] => [
   {
     accessorKey: "cpf",
     header: "CPF",
@@ -22,10 +28,14 @@ export const columns: ColumnDef<Funcionario>[] = [
   },
   {
     accessorKey: "cargo",
-    header: "Cargo"
+    header: "Cargo",
   },
   {
-    accessorKey: "data_entrada",
+    accessorKey: "dataEntrada",
     header: "Data de Entrada",
-  }
-]
+  },
+  {
+    id: 'actions',
+    cell: ({row}) => <DataTableRowActions row={row} onEdit={onEdit} onDelete={onDelete} />,
+  },
+];
