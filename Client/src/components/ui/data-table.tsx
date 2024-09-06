@@ -1,4 +1,3 @@
-// src/components/ui/data-table.tsx
 "use client"
 
 import {
@@ -33,7 +32,7 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div className="tabela1">
+    <div className="rounded-md border">
       <Table>
         <TableHeader>
           {table.getHeaderGroups().map((headerGroup) => (

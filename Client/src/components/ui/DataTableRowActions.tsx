@@ -1,3 +1,5 @@
+"use client"
+
 import { Row } from "@tanstack/react-table";
 import { MoreHorizontal } from "lucide-react";
 import {Button} from "./button"
@@ -6,7 +8,8 @@ import {
     DropdownMenuTrigger,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuSeparator,
+    //DropdownMenuSeparator,
+    DropdownMenuLabel,
 } from "./dropdown-menu"
 
 interface DataTableRowActionsProps<TData> {
@@ -19,13 +22,13 @@ const DataTableRowActions = <TData, >({row, onEdit, onDelete}: DataTableRowActio
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
-                <Button variant="ghost" className="flex h-8 w-8 p-8 data-[state=open]:bg-muted">
+                <Button variant="ghost" className="w-8 h-8 p-0">
                     <MoreHorizontal className="h-4 w-4" />
                 </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
+                <DropdownMenuLabel>Actions</DropdownMenuLabel>
                 <DropdownMenuItem onClick={() => onEdit(row.original)}>Edit</DropdownMenuItem>
-                <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={() => onDelete(row.original)}>Delete</DropdownMenuItem>
             </DropdownMenuContent>
         </DropdownMenu>

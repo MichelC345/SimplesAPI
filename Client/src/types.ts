@@ -29,7 +29,7 @@
     bs: string
   } */
 
-  export interface Funcionario {
+  export interface Employee {
     id: number
     cargo: string
     cpf: string
