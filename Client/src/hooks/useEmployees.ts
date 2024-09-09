@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Employee } from "@/types";
-import getUsers from "@/app/services/index";
+import {getEmployees} from "@/app/services/index";
 
 export const useEmployees = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
@@ -11,7 +11,7 @@ export const useEmployees = () => {
     const fetchEmployees = async () => {
       try {
         setLoading(true);
-        const data = await getUsers();
+        const data = await getEmployees();
         setEmployees(data);
       } catch (error) {
         setError(error as Error);

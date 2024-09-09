@@ -5,13 +5,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-//import org.springframework.web.bind.annotation.CrossOrigin;
-import com.simplesapi.funcionario.repository.EmployeeRepository;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import com.simplesapi.funcionario.model.*;
 import java.util.List;
 import java.util.Optional;
 
-//@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/funcionarios") //em api/funcionarios, retorna a relação de funcionários
 public class EmployeeController {
@@ -36,8 +35,8 @@ public class EmployeeController {
     }
 
     public boolean validateRole(String role) {
-        return role != null && (role == "Gerente" || role == "Administrador" || role == "Tesoureiro"
-        || role == "Desenvolvedor" || role == "Suporte" || role == "Secretario");
+        return role != null && (role.equals("Gerente") || role.equals("Administrador") || role.equals("Tesoureiro")
+        || role.equals("Desenvolvedor") || role.equals("Suporte") || role.equals("Secretario"));
     }
 
     @GetMapping //listagem de todos os funcionários
@@ -56,7 +55,9 @@ public class EmployeeController {
 
     @DeleteMapping("/{id}") //remoção de um funcionário
     public ResponseEntity<String> deleteEmployee(@PathVariable("id") Long id) {
+        System.out.println("Received ID: " + id);
         if (empService.getEmployeeById(id).isEmpty()) {
+            System.out.println("Funcionario de id " + id + " não existe");
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Funcionário não existente.");
         }
         empService.deleteEmployee(id);
@@ -83,11 +84,26 @@ public class EmployeeController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O cargo inserido é inválido.");
         }
         empService.updateEmployee(id, updatedEmp);
-        return ResponseEntity.status(HttpStatus.OK).body("Usuário atualizado com sucesso!");
+        return ResponseEntity.status(HttpStatus.OK).body("Funcionário atualizado com sucesso!");
     }
 
     @PostMapping
-    public Employee createEmployee(@RequestBody Employee employee) {
-        return empService.saveEmployee(employee);
+    public ResponseEntity<String> createEmployee(@RequestBody Employee employee) {
+        //validação dos campos
+        if (!validateName(employee.getNome())) {
+            //return ResponseEntity.badRequest().build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O nome deve ter ao menos 4 caracteres.");
+        }else if (!validateCPF(employee.getCPF())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O CPF deve ter 11 caracteres.");
+        }else if (!validateEmail(employee.getEmail())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O e-mail deve ser válido.");
+        }else if (!validatePhone(employee.getTelefone())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O telefone deve ser válido.");
+        }else if (!validateRole(employee.getCargo())) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O cargo inserido é inválido.");
+        }
+
+        empService.saveEmployee(employee);
+        return ResponseEntity.status(HttpStatus.OK).body("Funcionário cadastrado com sucesso!");
     }
 }

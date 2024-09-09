@@ -32,6 +32,10 @@ public class Employee {
 
     // Getters and Setters
 
+    public Long getId() {
+        return this.id;
+    }
+
     public String getCPF() {
         return this.cpf;
     }

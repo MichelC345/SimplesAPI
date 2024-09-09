@@ -2,7 +2,7 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import { Employee } from "@/types"
-import DataTableRowActions from "@/components/ui/DataTableRowActions"
+import DataTableRowActions from "@/components/DataTable/DataTableRowActions"
 
 interface EmployeeColumnsProps {
   onEdit: (emp: Employee) => void;
