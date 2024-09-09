@@ -19,6 +19,7 @@ const updateData = async () => {
 */
 
 export const getEmployees = async (): Promise<Employee[]> => {
+  console.log("executando getEmployees");
   const data = await fetch("http://localhost:8080/api/funcionarios", {
     method: 'GET',
     cache: "force-cache",

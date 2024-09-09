@@ -1,37 +1,15 @@
 import { Button } from '@/components/ui/button';
-import CurrencyInput from '@/components/ui/CurrencyInput';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { createEmployee, updateEmployee} from '@/app/services';
-import { useToast } from '@/components/ui/use-toast';
-import { queryKeys } from '@/services/queryKey.factory';
 //import { BankAccount, CreateBankAccountDto } from '@/types/BankAccount.types';
 import {Employee} from "@/types";
-import { convertCurrencyToNumber, isAmountWithinRange, MAX_VALUE } from '@/utils/numberUtils';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 import { useEffect } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 
-const formSchema = z.object({
-  accountNumber: z
-    .string()
-    .min(1, { message: 'Account number is empty' })
-    .max(50, { message: 'Account number should be shorter than 50 characters' }),
-  balance: z
-    .string({
-      required_error: 'Balance is empty',
-    })
-    .refine(
-      (value) => {
-        return isAmountWithinRange(convertCurrencyToNumber(value));
-      },
-      { message: `Balance should be between -${MAX_VALUE} and ${MAX_VALUE}` }
-    ),
-});
 
 interface EmployeeProps {
   isOpen: boolean;
@@ -40,19 +18,22 @@ interface EmployeeProps {
 }
 
 const EmployeeForm = ({ isOpen, onOpenChange, employee }: EmployeeProps) => {
-  const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm({
     defaultValues: {
-      accountNumber: '',
+      cpf: '',
+      nome: '',
+      cargo: '',
+      email: '',
+      telefone: '',
+      dataEntrada: '',
     },
     mode: 'onChange',
   });
 
   const onCreateSuccess = async (newEmployee: Employee) => {
-    await queryClient.setQueryData(queryKeys.fetchEmployees.all, (oldData?: Employee[]) => {
+    /*await queryClient.setQueryData(queryKeys.fetchEmployees.all, (oldData?: Employee[]) => {
       if (oldData) {
         return [newEmployee, ...oldData];
       }
@@ -60,12 +41,13 @@ const EmployeeForm = ({ isOpen, onOpenChange, employee }: EmployeeProps) => {
     });
     toast({
       description: 'Bank Account was added successfully.',
-    });
+    }); */
+    console.log("Funcionário cadastrado com sucesso!");
     onOpenChange(false);
   };
 
   const onUpdateSuccess = async (updatedEmployee: Employee) => {
-    await queryClient.setQueryData(queryKeys.fetchEmployees.all, (oldData?: Employee[]) => {
+    /*await queryClient.setQueryData(queryKeys.fetchEmployees.all, (oldData?: Employee[]) => {
       if (oldData) {
         return oldData.map((Employee) =>
           Employee.id === updatedEmployee.id ? updatedEmployee : Employee
@@ -75,16 +57,18 @@ const EmployeeForm = ({ isOpen, onOpenChange, employee }: EmployeeProps) => {
     });
     toast({
       description: 'Bank Account was updated successfully.',
-    });
+    }); */
+    console.log("Funcionário atualizado com sucesso!");
     onOpenChange(false);
   };
 
   const onRequestError = () => {
-    toast({
+    /*toast({
       variant: 'destructive',
       title: 'Uh oh! Something went wrong.',
       description: 'There was a problem with your request.',
-    });
+    }); */
+    console.log("Ocorreu um erro na requisição.");
   };
 
   const createMutation = useMutation({
@@ -94,31 +78,44 @@ const EmployeeForm = ({ isOpen, onOpenChange, employee }: EmployeeProps) => {
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, ...dto }: CreateEmployeeDto & { id: number }) => updateEmployee(id, dto),
+    //mutationFn: ({ id, ...dto }: CreateEmployeeDto & { id: number }) => updateEmployee(id, dto),
+    mutationFn: updateEmployee,
     onSuccess: onUpdateSuccess,
     onError: onRequestError,
   });
 
   useEffect(() => {
-    if (Employee) {
+    if (employee) {
       form.reset({
-        accountNumber: Employee.accountNumber,
-        balance: Employee.balance.toString(),
+        //accountNumber: Employee.accountNumber,
+        //balance: Employee.balance.toString(),
+        cpf: employee.cpf,
+        nome: employee.nome,
+        cargo: employee.cargo,
+        email: employee.email,
+        telefone: employee.telefone,
+        dataEntrada: employee.data_entrada,
       });
     } else {
       form.reset();
     }
-  }, [isOpen, Employee]);
+  }, [isOpen, employee]);
 
-  const onSubmit: SubmitHandler<z.infer<typeof formSchema>> = (values: z.infer<typeof formSchema>) => {
-    const createDto: CreateEmployeeDto = {
-      accountNumber: values.accountNumber,
-      balance: convertCurrencyToNumber(values.balance),
-    };
-    if (!Employee) {
-      createMutation.mutate(createDto);
+  const onSubmit: SubmitHandler = (emp: Employee) => {
+    /*const createDto: CreateEmployeeDto = {
+        cpf: emp.cpf,
+        nome: emp.nome,
+        cargo: emp.cargo,
+        email: emp.email,
+        telefone: emp.telefone,
+        dataEntrada: emp.data_entrada,
+    }; */
+    if (!employee) {
+      //createMutation.mutate(createDto);
+      createMutation.mutate(emp); //createEmployee receberá emp
     } else {
-      updateMutation.mutate({ ...createDto, id: Employee.id });
+      //updateMutation.mutate({ ...createDto, id: employee.id });
+      updateMutation.mutate(emp.id, emp); //updateEmployee receberá emp e seu id correspondente
     }
   };
 
@@ -129,7 +126,7 @@ const EmployeeForm = ({ isOpen, onOpenChange, employee }: EmployeeProps) => {
       </DialogTrigger>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle>{Employee ? 'Update the bank account' : 'Create new bank account'}</DialogTitle>
+          <DialogTitle>{employee ? 'Atualizar funcionário' : 'Cadastrar funcionário'}</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form className="space-y-4">
@@ -140,7 +137,7 @@ const EmployeeForm = ({ isOpen, onOpenChange, employee }: EmployeeProps) => {
                 <FormItem>
                   <FormLabel>CPF do Funcionário</FormLabel>
                   <FormControl>
-                    <Input placeholder="13719713158835300" {...field} />
+                    <Input placeholder="11 digitos" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -153,20 +150,46 @@ const EmployeeForm = ({ isOpen, onOpenChange, employee }: EmployeeProps) => {
                 <FormItem>
                   <FormLabel>Nome</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input placeholder="Ao menos 4 digitos" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
             />
             <FormField
-              name="nome"
+              name="cargo"
               control={form.control}
-              render={({ field: { value, onChange } }) => (
+              render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Balance</FormLabel>
+                  <FormLabel>Cargo</FormLabel>
                   <FormControl>
-                    <CurrencyInput value={value} onValueChange={(value) => onChange(value)} />
+                    <Input placeholder="Informe um cargo válido" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="email"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>E-mail</FormLabel>
+                  <FormControl>
+                    <Input placeholder="Informe um e-mail válido" {...field} />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              name="telefone"
+              control={form.control}
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Telefone</FormLabel>
+                  <FormControl>
+                    <Input placeholder="O telefone deve ter 11 digitos" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

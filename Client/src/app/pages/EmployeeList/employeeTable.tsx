@@ -16,6 +16,7 @@ import EmployeeForm from "./employeeForm";
 
 const EmployeeTable = () =>{
   const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
+  const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const { employees, loading, error } = useEmployees(); // Use the custom hook
   const queryClient = useQueryClient();
 
@@ -51,7 +52,7 @@ const EmployeeTable = () =>{
   if (loading) return <p>Loading...</p>; // Display loading state
   if (error) return <p>Error: {error.message}</p>; // Display error state
 
-  return (
+  /*return (
     <Card className="h-full">
       <CardHeader>
         <CardTitle>Relação de funcionários da Crypto</CardTitle>
@@ -60,7 +61,7 @@ const EmployeeTable = () =>{
           <div className="flex-nowrap">
             <EmployeeForm
               isOpen={isDialogOpen}
-              Employee={selectedEmployee}
+              employee={selectedEmployee}
               onOpenChange={(value) => {
                 setIsDialogOpen(value);
                 if (!value) {
@@ -76,6 +77,9 @@ const EmployeeTable = () =>{
       </CardContent>
     </Card>
     
+  ); */
+  return (
+    <DataTable data={employees} columns={columns} />
   );
 }
 

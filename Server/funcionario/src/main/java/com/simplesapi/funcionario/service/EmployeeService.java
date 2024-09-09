@@ -40,7 +40,7 @@ public class EmployeeService {
         emp.setTelefone(updatedEmp.getTelefone());
         emp.setCargo(updatedEmp.getCargo());
         //emp.setDataEntrada(updatedEmp.getDataEntrada());
-        emp.setDataEntrada(String.valueOf(LocalDate.now()));
+        emp.setDataEntrada((updatedEmp.getDataEntrada()));
 
         employeeRep.save(emp);
         //return employeeRep.save(emp);
