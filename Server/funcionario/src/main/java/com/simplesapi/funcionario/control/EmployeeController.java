@@ -7,6 +7,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 //import org.springframework.web.bind.annotation.CrossOrigin;
 import com.simplesapi.funcionario.model.*;
+
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,6 +70,7 @@ public class EmployeeController {
     //https://medium.com/@chandantechie/spring-boot-application-with-crud-operations-using-spring-data-jpa-and-mysql-23c8019660b1
     @PutMapping("/{id}") //edição de um funcionário
     public ResponseEntity<String> updateEmployee(@PathVariable("id") Long id, @RequestBody Employee updatedEmp) {
+        System.out.println(id + updatedEmp.getNome());
         if (empService.getEmployeeById(id).isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Funcionário não existente.");
         }
@@ -90,6 +93,7 @@ public class EmployeeController {
 
     @PostMapping
     public ResponseEntity<String> createEmployee(@RequestBody Employee employee) {
+        System.out.println("criando funcionário..." + employee);
         //validação dos campos
         if (!validateName(employee.getNome())) {
             //return ResponseEntity.badRequest().build();
@@ -104,6 +108,7 @@ public class EmployeeController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("O cargo inserido é inválido.");
         }
 
+        employee.setDataEntrada(String.valueOf(LocalDate.now()));
         empService.saveEmployee(employee);
         return ResponseEntity.status(HttpStatus.OK).body("Funcionário cadastrado com sucesso!");
     }

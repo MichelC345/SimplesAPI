@@ -24,8 +24,8 @@ public class EmployeeService {
         return employeeRep.findById(id);
     }
 
-    public Employee saveEmployee(@RequestBody Employee employee) {
-        return employeeRep.save(employee);
+    public void saveEmployee(@RequestBody Employee employee) {
+        employeeRep.save(employee);
     }
 
     public void deleteEmployee(Long id) {
@@ -40,7 +40,7 @@ public class EmployeeService {
         emp.setTelefone(updatedEmp.getTelefone());
         emp.setCargo(updatedEmp.getCargo());
         //emp.setDataEntrada(updatedEmp.getDataEntrada());
-        emp.setDataEntrada((updatedEmp.getDataEntrada()));
+        emp.setDataEntrada(updatedEmp.getDataEntrada());
 
         employeeRep.save(emp);
         //return employeeRep.save(emp);

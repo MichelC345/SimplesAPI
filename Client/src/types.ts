@@ -4,7 +4,7 @@
     id: number
     cargo: string
     cpf: string
-    data_entrada: Date
+    dataEntrada: string
     nome: string
     email: string
     telefone: string

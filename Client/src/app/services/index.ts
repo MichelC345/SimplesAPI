@@ -25,42 +25,73 @@ export const getEmployees = async (): Promise<Employee[]> => {
     cache: "force-cache",
   })
 
+  if (!data.ok) {
+    const error = await data.text();
+    console.error(`Erro ao exibir funcionários: ${error}`);
+    throw new Error(error);
+  }
+
   return data.json();
 };
 
-export const createEmployee = async (emp: Employee): Promise<Employee[]> => {
-  const data = await fetch(`http://localhost:8080/api/funcionarios`, {
+export const createEmployee = async (emp: Employee): Promise<Employee> => {
+  emp.dataEntrada = new Date().toISOString();
+  console.log(`tentando criar funcionário`, JSON.stringify(emp));
+  const data = await fetch("http://localhost:8080/api/funcionarios", {
     method: 'POST',
-    cache: "force-cache",
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    //cache: "force-cache",
+    /* "emp:" {}...}
     body: JSON.stringify({
       // Your data here
       emp
-    }),
+    }), */
+    body: JSON.stringify(emp)
   })
+
+  if (!data.ok) {
+    const error = await data.text();
+    console.error(`Erro ao criar funcionário: ${error}`);
+    throw new Error(error);
+  }
 
   return data.json();
 };
 
-export const updateEmployee = async (id: number, emp: Employee): Promise<Employee[]> => {
-  console.log(`o id é ${id}`);
-  const data = await fetch(`http://localhost:8080/api/funcionarios/${id}`, {
+export const updateEmployee = async (emp: Employee): Promise<Employee> => {
+  console.log(`o id é ${emp.id}`);
+  const data = await fetch(`http://localhost:8080/api/funcionarios/${emp.id}`, {
+    headers: {
+      'Content-Type': 'application/json',
+    },
     method: 'PUT',
     cache: "force-cache",
-    body: JSON.stringify({
-      // Your data here
-      emp
-    }),
+    body: JSON.stringify(emp),
   })
+
+  if (!data.ok) {
+    const error = await data.text();
+    console.error(`Erro ao atualizar funcionário: ${error}`);
+    throw new Error(error);
+  }
 
   return data.json();
 };
 
-export const deleteEmployee = async (id: number): Promise<Employee[]> => {
+export const deleteEmployee = async (id: number) => {
   console.log(`o id é ${id}`);
   const data = await fetch(`http://localhost:8080/api/funcionarios/${id}`, {
     method: 'DELETE',
     cache: "force-cache"
   })
 
-  return data.json();
+  if (!data.ok) {
+    const error = await data.text();
+    console.error(`Erro ao remover funcionário: ${error}`);
+    throw new Error(error);
+  }
+
+  //return data.json();
 };

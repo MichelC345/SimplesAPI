@@ -94,7 +94,7 @@ const EmployeeForm = ({ isOpen, onOpenChange, employee }: EmployeeProps) => {
         cargo: employee.cargo,
         email: employee.email,
         telefone: employee.telefone,
-        dataEntrada: employee.data_entrada,
+        dataEntrada: employee.dataEntrada,
       });
     } else {
       form.reset();
@@ -115,7 +115,7 @@ const EmployeeForm = ({ isOpen, onOpenChange, employee }: EmployeeProps) => {
       createMutation.mutate(emp); //createEmployee receberá emp
     } else {
       //updateMutation.mutate({ ...createDto, id: employee.id });
-      updateMutation.mutate(emp.id, emp); //updateEmployee receberá emp e seu id correspondente
+      updateMutation.mutate(emp); //updateEmployee receberá emp e seu id correspondente
     }
   };
 

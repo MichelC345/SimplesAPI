@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 @Entity
 @Table(name = "funcionarios") //indica a tabela que estou querendo acessar
 public class Employee {
+    public Employee() {}
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO) // a cada nova inserção, o id será auto incrementado

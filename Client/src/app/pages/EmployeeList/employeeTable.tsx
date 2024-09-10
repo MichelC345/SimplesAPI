@@ -43,8 +43,11 @@ const EmployeeTable = () =>{
   );
 
   const onEdit = useCallback(
-    (employee: Employee) => alert(`Botão de editar acionado para o funcionário de id ${employee.id}`),
-    []
+    //(employee: Employee) => alert(`Botão de editar acionado para o funcionário de id ${employee.id}`),
+    (employee: Employee) => {
+      setIsDialogOpen(true);
+      setSelectedEmployee(employee);
+    }, []
   );
 
   const columns = useMemo(() => getColumns({ onEdit, onDelete }), [onEdit, onDelete]);
@@ -52,7 +55,7 @@ const EmployeeTable = () =>{
   if (loading) return <p>Loading...</p>; // Display loading state
   if (error) return <p>Error: {error.message}</p>; // Display error state
 
-  /*return (
+  return (
     <Card className="h-full">
       <CardHeader>
         <CardTitle>Relação de funcionários da Crypto</CardTitle>
@@ -77,10 +80,10 @@ const EmployeeTable = () =>{
       </CardContent>
     </Card>
     
-  ); */
-  return (
-    <DataTable data={employees} columns={columns} />
   );
+  /*return (
+    <DataTable data={employees} columns={columns} />
+  ); */
 }
 
 export default EmployeeTable;
